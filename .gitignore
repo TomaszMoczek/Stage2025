@@ -169,3 +169,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Stage2025
+*.wav
+*.pdf
+readme.txt
+*.dll
+*.exe
+*.bat
