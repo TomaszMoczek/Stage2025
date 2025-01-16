@@ -1,11 +1,10 @@
 import sys
 
 
-def main() -> None:
-    exit_code = 0
+def main() -> int:
     print("Hello World!")
-    sys.exit(exit_code)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
