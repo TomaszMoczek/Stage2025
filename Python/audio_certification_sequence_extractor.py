@@ -19,9 +19,10 @@ def main() -> int:
             os.path.dirname(os.path.abspath(__file__)),
             file_names[i],
         )
-        fs, data = scipy.io.wavfile.read(file_path)
-        data = numpy.vstack((data,))
-        print(file_path, fs, data.shape, len(data))
+        if os.path.isfile(file_path):
+            fs, data = scipy.io.wavfile.read(file_path)
+            data = numpy.vstack((data,)) if len(data.shape) == 1 else data.T
+            print(file_path, fs, len(data))
 
     return 0
 
