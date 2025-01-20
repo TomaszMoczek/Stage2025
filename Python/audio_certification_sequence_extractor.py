@@ -22,7 +22,7 @@ def main() -> int:
         if os.path.isfile(file_path):
             fs, data = scipy.io.wavfile.read(file_path)
             data = numpy.vstack((data,)) if len(data.shape) == 1 else data.T
-            print(file_path, fs, len(data))
+            print(file_path, fs, len(data), data.dtype)
 
     return 0
 
