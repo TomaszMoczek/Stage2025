@@ -173,7 +173,7 @@ cython_debug/
 # Stage2025
 *.wav
 *.pdf
-readme.txt
+*.txt
 *.dll
 *.exe
 *.bat
