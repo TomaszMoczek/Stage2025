@@ -26,7 +26,12 @@ def usage() -> None:
 
 
 def parse_file(input_file_path) -> None:
-    pass
+    file_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        input_file_path,
+    )
+    if os.path.isfile(file_path):
+        print(file_path)
 
 
 def plot_file(input_file_path) -> None:
