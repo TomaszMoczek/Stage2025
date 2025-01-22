@@ -11,11 +11,13 @@
       "program": "${file}",
       "console": "integratedTerminal",
       "args": [
+        "-h",
         "-i",
-        "../Captures/raw/CTCELCWG2_1_lineIn_VOL50.wav",
+        "../KantarCertificationMeters.wav",
         "-o",
         "../Captures",
-        "-h"
+        "-p",
+        "-s"
       ]
     }
   ]
