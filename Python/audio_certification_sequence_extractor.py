@@ -7,6 +7,14 @@ from dsp_plotter import DspPlotter
 
 
 def usage() -> None:
+    """
+    Displays the help's message
+
+    Args:
+
+    Return:
+    None
+    """
     print(
         "Usage: python3 ./audio_certification_sequence_extractor.py [-h | -i input *.wav file's path [-o output folder's path | -p [-s]]]"
     )
@@ -26,16 +34,42 @@ def usage() -> None:
 
 
 def parse_file(file_path) -> None:
+    """
+    Parses the input *.wav file
+
+    Args:
+    str: file_path
+
+    Return:
+    None
+    """
     print(file_path)
 
 
 def plot_file(file_path) -> None:
+    """
+    Plots the input *.wav file
+
+    Args:
+    str: file_path
+
+    Return:
+    None
+    """
     fs, data = scipy.io.wavfile.read(file_path)
     data = numpy.vstack((data,)) if len(data.shape) == 1 else data.T
     print(file_path, fs, data.shape, data.dtype)
 
 
 def main() -> int:
+    """
+    Main program's function
+
+    Args:
+
+    Return:
+    int: exit code
+    """
     print("audio_certification_sequence_extractor v1.0")
     print("Copyright \u00A9 2025 Kantar Media")
     print()
@@ -45,12 +79,16 @@ def main() -> int:
         return 0
 
     if "-i" not in sys.argv:
+        print("-i command line argument is missing")
+        print()
         usage()
         return 1
 
     index = sys.argv.index("-i")
 
     if len(sys.argv) < index + 2:
+        print("input *.wav file's path command line argument is missing")
+        print()
         usage()
         return 1
 
@@ -60,6 +98,8 @@ def main() -> int:
     )
 
     if not os.path.isfile(file_path):
+        print(file_path, "is not a regular file's path")
+        print()
         usage()
         return 1
 
