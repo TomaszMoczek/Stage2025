@@ -10,15 +10,7 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "args": [
-        "-h",
-        "-i",
-        "../KantarCertificationMeters.wav",
-        "-o",
-        "../Captures",
-        "-p",
-        "-s"
-      ]
+      "args": ["-i", "../KantarCertificationMeters.wav", "-o", "../Captures"]
     }
   ]
 }
