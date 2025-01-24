@@ -135,7 +135,7 @@ class DspPlotter:
         dataplot = ax[0] if freqresp or phaseresp else ax
 
         dataplot.set_xlabel("Time (sec)" if div_by_N else "Samples")
-        dataplot.set_ylabel("Amplitude (mV)" if div_by_N else "Amplitude")
+        dataplot.set_ylabel("Amplitude")
         dataplot.grid(True, **grid_style)
         dataplot.set_xlim([0, N / fs if div_by_N else N])
 

@@ -10,7 +10,12 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "args": ["-i", "../KantarCertificationMeters.wav", "-o", "../Captures"]
+      "args": [
+        "-i",
+        "../Captures/raw/CTCE7_65dB10cm60dB30cm60dB2m.wav",
+        "-o",
+        "../Captures"
+      ]
     }
   ]
 }

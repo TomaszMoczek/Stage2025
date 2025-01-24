@@ -58,7 +58,13 @@ def plot_file(file_path) -> None:
     """
     fs, data = scipy.io.wavfile.read(file_path)
     data = numpy.vstack((data,)) if len(data.shape) == 1 else data.T
-    print(file_path, fs, data.shape, data.dtype)
+    labels = []
+    if len(data) == 1:
+        labels.append(os.path.basename(file_path))
+    else:
+        for i in range(len(data)):
+            labels.append(os.path.basename(file_path) + f" - channel {i+1}")
+    print(fs, data.shape, data.dtype, labels)
 
 
 def main() -> int:
