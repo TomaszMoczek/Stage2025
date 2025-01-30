@@ -67,6 +67,7 @@ for i in range(len(file_names)):
 
     print(begin_timestamps)
     print()
+    print()
 
 # here is what I expect without subtraction of the offset, but I manualy checked, that it is necessery to substract it
 # what i expect from CompactDetectionLog-CTCE7_65dB10cm60dB30cm60dB2m.wav.txt: [47, 1409, 2876] - ok
