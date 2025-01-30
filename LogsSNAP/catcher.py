@@ -1,5 +1,4 @@
 import os
-import numpy
 import pandas
 
 file_names = [
@@ -48,19 +47,15 @@ for i in range(len(file_names)):
             if duration >= MAX_SEQUENCE_LENGTH:
                 # watermark in a single line
                 begin_timestamp = begin - 90.0 - timestamp
-                if begin_timestamp < 0.0:
-                    begin_timestamp = numpy.float64(0.0)
                 begin_timestamps.append(begin_timestamp)
             else:
                 # watermark in more than just one line
                 flag = True
         else:
             # watermark in more than just one line
-            duration += df.iloc[j]["end"] - begin
+            duration = df.iloc[j]["end"] - begin
             if duration >= MAX_SEQUENCE_LENGTH:
                 begin_timestamp = begin - 90.0 - timestamp
-                if begin_timestamp < 0.0:
-                    begin_timestamp = numpy.float64(0.0)
                 begin_timestamps.append(begin_timestamp)
                 flag = False
 
