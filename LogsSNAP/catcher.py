@@ -30,7 +30,6 @@ for i in range(len(file_names)):
         sep="\t",
         header=None,
     )
-    df.fillna(value=0.0, inplace=True)
     df.columns = ["begin", "end", "type", "id", "timestamp"]
     df: pandas.DataFrame = df.loc[df["id"] == "00002C48"]
 
