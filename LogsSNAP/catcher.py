@@ -39,14 +39,14 @@ for i in range(len(file_names)):
 
     flag = False
     begin_timestamps = []
-    TOTAL_SEQUENCE_LENGTH = 1107.0
+    MAX_SEQUENCE_LENGTH = 1107.0
 
     for j in range(len(df)):
         if not flag:
             begin = df.iloc[j]["begin"]
             timestamp = df.iloc[j]["timestamp"]
             duration = df.iloc[j]["end"] - begin
-            if duration >= TOTAL_SEQUENCE_LENGTH:
+            if duration >= MAX_SEQUENCE_LENGTH:
                 # watermark in a single line
                 begin_timestamp = begin - 90.0 - timestamp
                 if begin_timestamp < 0.0:
@@ -58,7 +58,7 @@ for i in range(len(file_names)):
         else:
             # watermark in more than just one line
             duration += df.iloc[j]["end"] - begin
-            if duration >= TOTAL_SEQUENCE_LENGTH:
+            if duration >= MAX_SEQUENCE_LENGTH:
                 begin_timestamp = begin - 90.0 - timestamp
                 if begin_timestamp < 0.0:
                     begin_timestamp = numpy.float64(0.0)
