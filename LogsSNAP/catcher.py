@@ -17,8 +17,12 @@ for i in range(len(file_names)):
         file_names[i],
     )
 
+    if not os.path.isfile(file_path):
+        print(file_path, "file likely does not exist")
+        continue
+
     print()
-    print(str(i + 1) + ". ", file_path)
+    print(file_path)
     print()
 
     df = pd.read_csv(
