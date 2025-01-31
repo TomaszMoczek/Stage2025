@@ -1,4 +1,5 @@
 import os
+import numpy
 import pandas
 
 file_names = [
@@ -8,7 +9,7 @@ file_names = [
     "CompactDetectionLog-CTCELCWG2_1_65dB10cm60dB30cm_mic1.wav.txt",
     "CompactDetectionLog-CTCELCWG2_1_lineIn_VOL50.wav.txt",
     "CompactDetectionLog-KantarCertificationMeters.wav.txt",
-    "dzikie_dane.txt",
+    "test-1.txt",
 ]
 
 for i in range(len(file_names)):
@@ -30,34 +31,41 @@ for i in range(len(file_names)):
         header=None,
     )
     df.columns = ["begin", "end", "type", "id", "timestamp"]
-    df: pandas.DataFrame = df.loc[df["id"] == "00002C48"]
 
     print(df)
     print()
 
     flag = False
     begin_timestamps = []
-    MAX_SEQUENCE_LENGTH = 1107.0
+    ZERO = numpy.float64(0.0)
+    WATERMARK_SEQUENCE_LENGTH = numpy.float64(1107.0)
+    WHITE_NOISE_SEQUENCE_LENGTH = numpy.float64(90.0)
 
     for j in range(len(df)):
         if not flag:
-            begin = df.iloc[j]["begin"]
-            timestamp = df.iloc[j]["timestamp"]
+            if df.iloc[j]["id"] == "00002C48":
+                begin = df.iloc[j]["begin"]
+                timestamp = df.iloc[j]["timestamp"]
+                begin_timestamp = (
+                    begin
+                    - WHITE_NOISE_SEQUENCE_LENGTH
+                    - (ZERO if numpy.isnan(timestamp) else timestamp)
+                )
+                duration = df.iloc[j]["end"] - begin
+                if duration >= WATERMARK_SEQUENCE_LENGTH:  # watermark in a single line
+                    begin_timestamps.append(begin_timestamp)
+                else:  # watermark in more than just one line
+                    flag = True
+        elif df.iloc[j]["id"] == "00002C48":  # watermark in more than just one line
             duration = df.iloc[j]["end"] - begin
-            if duration >= MAX_SEQUENCE_LENGTH:
-                # watermark in a single line
-                begin_timestamp = begin - 90.0 - timestamp
-                begin_timestamps.append(begin_timestamp)
-            else:
-                # watermark in more than just one line
-                flag = True
-        else:
-            # watermark in more than just one line
-            duration = df.iloc[j]["end"] - begin
-            if duration >= MAX_SEQUENCE_LENGTH:
-                begin_timestamp = begin - 90.0 - timestamp
-                begin_timestamps.append(begin_timestamp)
+            if duration >= WATERMARK_SEQUENCE_LENGTH:
+                # end of watermark in more than just one line
                 flag = False
+                begin_timestamps.append(begin_timestamp)
+        elif df.iloc[j]["id"] == "0000912A":
+            # end of watermark in more than just one line
+            flag = False
+            begin_timestamps.append(begin_timestamp)
 
     print(begin_timestamps)
     print()

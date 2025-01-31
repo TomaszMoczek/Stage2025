@@ -77,7 +77,7 @@ def main() -> int:
     int: exit code
     """
     print("audio_certification_sequence_extractor v1.0")
-    print("Copyright \u00A9 2025 Kantar Media")
+    print("Copyright \u00A9 2025 Kantar Media Audiences Limited. All rights reserved.")
     print()
 
     if len(sys.argv) == 1 or "-h" in sys.argv:
