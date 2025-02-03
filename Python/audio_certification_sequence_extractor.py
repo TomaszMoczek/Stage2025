@@ -2,6 +2,7 @@ import os
 import sys
 import numpy
 import scipy
+import pandas
 
 from dsp_plotter import DspPlotter
 
@@ -31,6 +32,65 @@ def usage() -> None:
         "         -s                          - spectrogram of the input *.wav file's data"
     )
     print()
+
+
+def get_begin_timestamps(file_path) -> list:
+    """
+    Parses the CompactDetectionLog.txt file
+
+    Args:
+    str: file_path
+
+    Return:
+    list
+    """
+    begin_timestamps = []
+
+    if not os.path.isfile(file_path):
+        print(file_path, "file likely does not exist")
+        return begin_timestamps
+
+    df = pandas.read_csv(
+        filepath_or_buffer=file_path,
+        sep="\t",
+        header=None,
+    )
+    df.columns = ["begin", "end", "type", "id", "timestamp"]
+
+    flag = False
+    ZERO = numpy.float64(0.0)
+    WATERMARK_SEQUENCE_LENGTH = numpy.float64(1107.0)
+    WHITE_NOISE_SEQUENCE_LENGTH = numpy.float64(90.0)
+
+    for j in range(len(df)):
+        if not flag:
+            if df.iloc[j]["id"] == "00002C48":
+                begin = df.iloc[j]["begin"]
+                timestamp = df.iloc[j]["timestamp"]
+                begin_timestamp = (
+                    begin
+                    - WHITE_NOISE_SEQUENCE_LENGTH
+                    - (ZERO if numpy.isnan(timestamp) else timestamp)
+                )
+                if begin_timestamp < ZERO:
+                    begin_timestamp = ZERO
+                duration = df.iloc[j]["end"] - begin
+                if duration >= WATERMARK_SEQUENCE_LENGTH:  # watermark in a single line
+                    begin_timestamps.append(begin_timestamp)
+                else:  # watermark in more than just one line
+                    flag = True
+        elif df.iloc[j]["id"] == "00002C48":  # watermark in more than just one line
+            duration = df.iloc[j]["end"] - begin
+            if duration >= WATERMARK_SEQUENCE_LENGTH:
+                # end of watermark in more than just one line
+                flag = False
+                begin_timestamps.append(begin_timestamp)
+        elif df.iloc[j]["id"] == "0000912A":
+            # end of watermark in more than just one line
+            flag = False
+            begin_timestamps.append(begin_timestamp)
+
+    return begin_timestamps
 
 
 def parse_file(file_path) -> None:
