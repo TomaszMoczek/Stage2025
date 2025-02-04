@@ -36,7 +36,7 @@ def usage() -> None:
 
 def get_begin_timestamps(file_path) -> list:
     """
-    Parses the CompactDetectionLog.txt file
+    Parses the input CompactDetectionLog.txt file
 
     Args:
     str: file_path
