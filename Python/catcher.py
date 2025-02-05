@@ -134,16 +134,17 @@ for i in range(len(log_file_names)):
             + str(index + 1)
             + ".wav"
         )
-        output_wav_file_path = os.path.join(
+        output_file_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../Captures/" + file_name,
+            "../Captures",
+            file_name,
         )
-        print(output_wav_file_path)
         scipy.io.wavfile.write(
-            output_wav_file_path,
+            output_file_path,
             fs,
             sequence,
         )
+        print(output_file_path)
 
     print()
     print()
