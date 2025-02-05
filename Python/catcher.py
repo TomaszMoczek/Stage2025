@@ -128,7 +128,7 @@ for i in range(len(log_file_names)):
             sequences.append(numpy.array(inner_sequences).T)
 
     for index, sequence in enumerate(sequences):
-        name = (
+        file_name = (
             os.path.basename(wav_file_path).split(".")[0]
             + "_"
             + str(index + 1)
@@ -136,7 +136,7 @@ for i in range(len(log_file_names)):
         )
         output_wav_file_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../Captures/" + name,
+            "../Captures/" + file_name,
         )
         print(output_wav_file_path)
         scipy.io.wavfile.write(
