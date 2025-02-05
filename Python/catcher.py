@@ -106,6 +106,7 @@ for i in range(len(log_file_names)):
     print()
 
     sequences = []
+    output_file_paths = []
     fs, data = scipy.io.wavfile.read(wav_file_path)
 
     if data.ndim == 1:
@@ -144,7 +145,8 @@ for i in range(len(log_file_names)):
             fs,
             sequence,
         )
-        print(output_file_path)
+        output_file_paths.append(output_file_path)
 
+    print(output_file_paths)
     print()
     print()
