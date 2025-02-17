@@ -77,7 +77,9 @@ for i in range(len(log_file_names)):
     )
 
     if completed_process.returncode != 0:
-        print(completed_process.stderr.decode())
+        print(
+            f"subprocess exited with {completed_process.returncode} return code: [{completed_process.stderr.decode()}]"
+        )
 
     continue
 
