@@ -2,34 +2,35 @@ import os
 import numpy
 import pandas
 import scipy
+import subprocess
 
 
 log_file_names = [
-    "../LogsSNAP/CompactDetectionLog-CTCE7_65dB10cm60dB30cm60dB2m.wav.txt",
-    "../LogsSNAP/CompactDetectionLog-CTCELC2_10cmVol9_2.wav.txt",
-    "../LogsSNAP/CompactDetectionLog-CTCELCWG2_1_60dB2m.wav.txt",
-    "../LogsSNAP/CompactDetectionLog-CTCELCWG2_1_65dB10cm60dB30cm_mic1.wav.txt",
-    "../LogsSNAP/CompactDetectionLog-CTCELCWG2_1_lineIn_VOL50.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCE7_65dB10cm60dB30cm60dB2m.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCELC2_10cmVol9_2.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCELCWG2_1_60dB2m.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCELCWG2_1_65dB10cm60dB30cm_mic1.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCELCWG2_1_lineIn_VOL50.wav.txt",
     "../LogsSNAP/CompactDetectionLog-KantarCertificationMeters.wav.txt",
-    "../LogsSNAP/CompactDetectionLog-CTCE7_10cmvol9_1.wav.txt",
-    "../LogsSNAP/CompactDetectionLog-CTCE7_10cmvol9_2.wav.txt",
-    "../LogsSNAP/CompactDetectionLog-CTCE7_30cm_1m_vol7.wav.txt",
-    "../LogsSNAP/CompactDetectionLog-CTCELC2_30cm_1m_vol7.wav.txt",
-    "../LogsSNAP/CompactDetectionLog-CTCELC2_GluedVol7.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCE7_10cmvol9_1.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCE7_10cmvol9_2.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCE7_30cm_1m_vol7.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCELC2_30cm_1m_vol7.wav.txt",
+    # "../LogsSNAP/CompactDetectionLog-CTCELC2_GluedVol7.wav.txt",
 ]
 
 wav_file_names = [
-    "../Captures/raw/CTCE7_65dB10cm60dB30cm60dB2m.wav",
-    "../Captures/raw/CTCELC2_10cmVol9_2.wav",
-    "../Captures/raw/CTCELCWG2_1_60dB2m.wav",
-    "../Captures/raw/CTCELCWG2_1_65dB10cm60dB30cm_mic1.wav",
-    "../Captures/raw/CTCELCWG2_1_lineIn_VOL50.wav",
+    # "../Captures/raw/CTCE7_65dB10cm60dB30cm60dB2m.wav",
+    # "../Captures/raw/CTCELC2_10cmVol9_2.wav",
+    # "../Captures/raw/CTCELCWG2_1_60dB2m.wav",
+    # "../Captures/raw/CTCELCWG2_1_65dB10cm60dB30cm_mic1.wav",
+    # "../Captures/raw/CTCELCWG2_1_lineIn_VOL50.wav",
     "../KantarCertificationMeters.wav",
-    "../Captures/raw/CTCE7_10cmvol9_1.wav",
-    "../Captures/raw/CTCE7_10cmvol9_2.wav",
-    "../Captures/raw/CTCE7_30cm_1m_vol7.wav",
-    "../Captures/raw/CTCELC2_30cm_1m_vol7.wav",
-    "../Captures/raw/CTCELC2_GluedVol7.wav",
+    # "../Captures/raw/CTCE7_10cmvol9_1.wav",
+    # "../Captures/raw/CTCE7_10cmvol9_2.wav",
+    # "../Captures/raw/CTCE7_30cm_1m_vol7.wav",
+    # "../Captures/raw/CTCELC2_30cm_1m_vol7.wav",
+    # "../Captures/raw/CTCELC2_GluedVol7.wav",
 ]
 
 for i in range(len(log_file_names)):
@@ -57,6 +58,28 @@ for i in range(len(log_file_names)):
 
     print(wav_file_path)
     print()
+
+    completed_process = subprocess.run(
+        [
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "../SamplesAudioWM/Sample_Reader.exe",
+            ),
+            "-i",
+            wav_file_path,
+            "-type",
+            "SNAP",
+            "-profile",
+            "P5T",
+        ],
+        capture_output=True,
+        start_new_session=True,
+    )
+
+    if completed_process.returncode != 0:
+        print(completed_process.stderr.decode())
+
+    continue
 
     df = pandas.read_csv(
         filepath_or_buffer=log_file_path,
