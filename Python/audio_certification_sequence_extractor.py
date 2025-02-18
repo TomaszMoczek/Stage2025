@@ -17,7 +17,7 @@ def usage() -> None:
     None
     """
     print(
-        "Usage: python3 ./audio_certification_sequence_extractor.py [-h | -i input *.wav file's path [-o output folder's path | -p [-s]]]"
+        "Usage: python3 audio_certification_sequence_extractor.py [-h | -i input *.wav file's path [-o output folder's path | -p [-f] [-s] [-l]]]"
     )
     print()
     print("         -h                          - display this help's message")
@@ -25,11 +25,17 @@ def usage() -> None:
         "         -i input *.wav file's path  - path of the input *.wav file [mandatory]"
     )
     print(
-        "         -o output folder's path     - path of the output folder for the extracted *.wav file(-s) [default is a path of this script's parent folder]"
+        "         -o output folder's path     - path of the output folder for the extracted *.wav file(-s) [default is a path of the current working directory]"
     )
     print("         -p                          - plot of the input *.wav file's data")
     print(
+        "         -f                          - fft spectrum analysis of the input *.wav file's data"
+    )
+    print(
         "         -s                          - spectrogram of the input *.wav file's data"
+    )
+    print(
+        "         -l                          - play the sound of the input *.wav file"
     )
     print()
 
@@ -136,7 +142,7 @@ def extract_sequence_files(file_path, begin_timestamps) -> list:
         file_name = (
             os.path.basename(file_path).split(".")[0] + "_" + str(index + 1) + ".wav"
         )
-        output_folder_path = os.path.dirname(os.path.abspath(__file__))
+        output_folder_path = os.getcwd()
         if "-o" in sys.argv:
             index = sys.argv.index("-o")
             if len(sys.argv) >= index + 2:
@@ -231,7 +237,7 @@ def main() -> int:
         return 1
 
     file_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
+        os.getcwd(),
         sys.argv[index + 1],
     )
 

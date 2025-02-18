@@ -12,9 +12,9 @@
       "console": "integratedTerminal",
       "args": [
         "-i",
-        "../Captures/raw/CTCE7_65dB10cm60dB30cm60dB2m.wav",
+        "./Captures/raw/CTCE7_65dB10cm60dB30cm60dB2m.wav",
         "-o",
-        "../Captures"
+        "./Captures"
       ]
     }
   ]
