@@ -138,25 +138,26 @@ def extract_sequence_files(file_path, begin_timestamps) -> list:
                 inner_sequences.append(sequence)
             sequences.append(numpy.array(inner_sequences).T)
 
+    output_folder_path = os.getcwd()
+    if "-o" in sys.argv:
+        index = sys.argv.index("-o")
+        if len(sys.argv) >= index + 2:
+            output_folder_name = sys.argv[index + 1]
+            if os.path.isdir(
+                os.path.join(
+                    output_folder_path,
+                    output_folder_name,
+                )
+            ):
+                output_folder_path = os.path.join(
+                    output_folder_path,
+                    output_folder_name,
+                )
+
     for index, sequence in enumerate(sequences):
         file_name = (
             os.path.basename(file_path).split(".")[0] + "_" + str(index + 1) + ".wav"
         )
-        output_folder_path = os.getcwd()
-        if "-o" in sys.argv:
-            index = sys.argv.index("-o")
-            if len(sys.argv) >= index + 2:
-                output_folder_name = sys.argv[index + 1]
-                if os.path.isdir(
-                    os.path.join(
-                        output_folder_path,
-                        output_folder_name,
-                    )
-                ):
-                    output_folder_path = os.path.join(
-                        output_folder_path,
-                        output_folder_name,
-                    )
         output_file_path = os.path.join(
             output_folder_path,
             file_name,
