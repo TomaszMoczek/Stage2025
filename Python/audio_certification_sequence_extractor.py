@@ -3,8 +3,7 @@ import sys
 import numpy
 import scipy
 import pandas
-
-from dsp_plotter import DspPlotter
+import subprocess
 
 
 def usage() -> None:
@@ -17,7 +16,7 @@ def usage() -> None:
     None
     """
     print(
-        "Usage: python3 audio_certification_sequence_extractor.py [-h | -i input *.wav file's path [-o output folder's path | -p [-f] [-s] [-l]]]"
+        "Usage: python audio_certification_sequence_extractor.py [-h | -i input *.wav file's path [-o output folder's path]]"
     )
     print()
     print("         -h                          - display this help's message")
@@ -26,16 +25,6 @@ def usage() -> None:
     )
     print(
         "         -o output folder's path     - path of the output folder for the extracted *.wav file(-s) [default is a path of the current working directory]"
-    )
-    print("         -p                          - plot of the input *.wav file's data")
-    print(
-        "         -f                          - fft spectrum analysis of the input *.wav file's data"
-    )
-    print(
-        "         -s                          - spectrogram of the input *.wav file's data"
-    )
-    print(
-        "         -l                          - play the sound of the input *.wav file"
     )
     print()
 
@@ -56,8 +45,33 @@ def get_begin_timestamps(file_path) -> list:
         print(file_path, "file likely does not exist")
         return begin_timestamps
 
+    sample_reader = subprocess.run(
+        [
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "../SamplesAudioWM/Sample_Reader.exe",
+            ),
+            "-i",
+            file_path,
+            "-type",
+            "SNAP",
+            "-profile",
+            "P5T",
+        ],
+        capture_output=True,
+        start_new_session=True,
+    )
+
+    if sample_reader.returncode != 0:
+        print(f"Sample_Reader.exe exited with {sample_reader.returncode} return code:")
+        print(f"{sample_reader.stderr.decode()}")
+        return begin_timestamp
+
     df = pandas.read_csv(
-        filepath_or_buffer=file_path,
+        filepath_or_buffer=os.path.join(
+            os.getcwd(),
+            "./CompactDetectionLog.txt",
+        ),
         sep="\t",
         header=None,
     )
@@ -168,6 +182,103 @@ def extract_sequence_files(file_path, begin_timestamps) -> list:
             sequence,
         )
         output_file_paths.append(output_file_path)
+        print("Extracted", output_file_path, "output file")
+
+    if os.path.basename(file_path) == "KantarCertificationMeters.wav":
+        sample_reader = subprocess.run(
+            [
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "../SamplesAudioWM/Sample_Reader.exe",
+                ),
+                "-i",
+                file_path,
+                "-type",
+                "SNAP",
+                "-profile",
+                "P5T",
+                "-certificationMode",
+                "2",
+            ],
+            capture_output=True,
+            start_new_session=True,
+        )
+
+        if sample_reader.returncode != 0:
+            print(
+                f"Sample_Reader.exe exited with {sample_reader.returncode} return code:"
+            )
+            print(f"{sample_reader.stderr.decode()}")
+
+        return output_file_paths
+
+    certification_modes_to_use = {}
+    certification_modes = {
+        "lineIn": 2,
+        "Glued": 2,
+        "10cm": 3,
+        "30cm": 4,
+        "1m": 4,
+        "2m": 4,
+        "3m": 4,
+    }
+    certification_distances = {
+        "lineIn": -1,
+        "Glued": -1,
+        "10cm": -1,
+        "30cm": -1,
+        "1m": -1,
+        "2m": -1,
+        "3m": -1,
+    }
+
+    for distance in certification_distances.keys():
+        certification_distances[distance] = os.path.basename(file_path).find(distance)
+
+    certification_distances = {
+        k: v for k, v in certification_distances.items() if v > -1
+    }
+
+    certification_distances = dict(
+        sorted(certification_distances.items(), key=lambda item: item[1])
+    )
+
+    if len(certification_distances) != len(output_file_paths):
+        print("Diffrent amaounts of sequences")
+        return output_file_paths
+
+    for index, distance in enumerate(certification_distances.keys()):
+        certification_distances[distance] = output_file_paths[index]
+
+    for distance in certification_distances.keys():
+        certification_modes_to_use[certification_distances[distance]] = (
+            certification_modes[distance]
+        )
+
+    for sequence in certification_modes_to_use.keys():
+        sample_reader = subprocess.run(
+            [
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "../SamplesAudioWM/Sample_Reader.exe",
+                ),
+                "-i",
+                sequence,
+                "-type",
+                "SNAP",
+                "-profile",
+                "P5T",
+                "-certificationMode",
+                str(certification_modes_to_use[sequence]),
+            ],
+            capture_output=True,
+            start_new_session=True,
+        )
+        if sample_reader.returncode != 0:
+            print(
+                f"Sample_Reader.exe exited with {sample_reader.returncode} return code:"
+            )
+            print(f"{sample_reader.stderr.decode()}")
 
     return output_file_paths
 
@@ -182,28 +293,12 @@ def parse_file(file_path) -> None:
     Return:
     None
     """
-    print(file_path)
-
-
-def plot_file(file_path) -> None:
-    """
-    Plots the input *.wav file
-
-    Args:
-    str: file_path
-
-    Return:
-    None
-    """
-    fs, data = scipy.io.wavfile.read(file_path)
-    data = numpy.vstack((data,)) if len(data.shape) == 1 else data.T
-    labels = []
-    if len(data) == 1:
-        labels.append(os.path.basename(file_path))
-    else:
-        for i in range(len(data)):
-            labels.append(os.path.basename(file_path) + f" - channel {i+1}")
-    print(fs, data.shape, data.dtype, labels)
+    print("Parsing", file_path, "input file")
+    begin_timestamps = get_begin_timestamps(file_path=file_path)
+    if len(begin_timestamps) == 0:
+        print("Failed to parse the input file")
+        return
+    extract_sequence_files(file_path=file_path, begin_timestamps=begin_timestamps)
 
 
 def main() -> int:
@@ -247,10 +342,6 @@ def main() -> int:
         print()
         usage()
         return 1
-
-    if "-p" in sys.argv:
-        plot_file(file_path)
-        return 0
 
     parse_file(file_path)
     return 0
