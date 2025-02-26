@@ -113,13 +113,14 @@ def get_begin_timestamps(file_path) -> list:
     return begin_timestamps
 
 
-def extract_sequence_files(file_path, begin_timestamps) -> list:
+def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> list:
     """
     Extracts the output audio sequence files from the input *.wav file
 
     Args:
     str: file_path
     list: begin_timestamps
+    str: output_folder_path
 
     Return:
     list: output_file_paths
@@ -152,22 +153,6 @@ def extract_sequence_files(file_path, begin_timestamps) -> list:
                 inner_sequences.append(sequence)
             sequences.append(numpy.array(inner_sequences).T)
 
-    output_folder_path = os.getcwd()
-    if "-o" in sys.argv:
-        index = sys.argv.index("-o")
-        if len(sys.argv) >= index + 2:
-            output_folder_name = sys.argv[index + 1]
-            if os.path.isdir(
-                os.path.join(
-                    output_folder_path,
-                    output_folder_name,
-                )
-            ):
-                output_folder_path = os.path.join(
-                    output_folder_path,
-                    output_folder_name,
-                )
-
     for index, sequence in enumerate(sequences):
         file_name = (
             os.path.basename(file_path).split(".")[0] + "_" + str(index + 1) + ".wav"
@@ -183,34 +168,6 @@ def extract_sequence_files(file_path, begin_timestamps) -> list:
         )
         output_file_paths.append(output_file_path)
         print("Extracted", output_file_path, "output file")
-
-    if os.path.basename(file_path) == "KantarCertificationMeters.wav":
-        sample_reader = subprocess.run(
-            [
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "../SamplesAudioWM/Sample_Reader.exe",
-                ),
-                "-i",
-                file_path,
-                "-type",
-                "SNAP",
-                "-profile",
-                "P5T",
-                "-certificationMode",
-                "2",
-            ],
-            capture_output=True,
-            start_new_session=True,
-        )
-
-        if sample_reader.returncode != 0:
-            print(
-                f"Sample_Reader.exe exited with {sample_reader.returncode} return code:"
-            )
-            print(f"{sample_reader.stderr.decode()}")
-
-        return output_file_paths
 
     certification_modes_to_use = {}
     certification_modes = {
@@ -283,12 +240,13 @@ def extract_sequence_files(file_path, begin_timestamps) -> list:
     return output_file_paths
 
 
-def parse_file(file_path) -> None:
+def parse_file(file_path, output_folder_path) -> None:
     """
     Parses the input *.wav file
 
     Args:
     str: file_path
+    str: output_folder_path
 
     Return:
     None
@@ -296,9 +254,13 @@ def parse_file(file_path) -> None:
     print("Parsing", file_path, "input file")
     begin_timestamps = get_begin_timestamps(file_path=file_path)
     if len(begin_timestamps) == 0:
-        print("Failed to parse the input file")
+        print("Failed to parse", file_path, "input file")
         return
-    extract_sequence_files(file_path=file_path, begin_timestamps=begin_timestamps)
+    extract_sequence_files(
+        file_path=file_path,
+        begin_timestamps=begin_timestamps,
+        output_folder_path=output_folder_path,
+    )
 
 
 def main() -> int:
@@ -343,7 +305,29 @@ def main() -> int:
         usage()
         return 1
 
-    parse_file(file_path)
+    output_folder_path = os.getcwd()
+
+    if "-o" in sys.argv:
+        index = sys.argv.index("-o")
+
+        if len(sys.argv) < index + 2:
+            print("output folder's path command line argument is missing")
+            print()
+            usage()
+            return 1
+
+        output_folder_path = os.path.join(
+            os.getcwd(),
+            sys.argv[index + 1],
+        )
+
+        if not os.path.isdir(output_folder_path):
+            print(output_folder_path, "is not a regular directory's path")
+            print()
+            usage()
+            return 1
+
+    parse_file(file_path, output_folder_path)
     return 0
 
 

@@ -114,6 +114,10 @@ def test_extract_sequence_files_CTCE7_10cmvol9_1() -> None:
             "../Captures/raw/CTCE7_10cmvol9_1.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -128,6 +132,10 @@ def test_extract_sequence_files_CTCE7_10cmvol9_2() -> None:
             "../Captures/raw/CTCE7_10cmvol9_2.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -142,6 +150,10 @@ def test_extract_sequence_files_CTCE7_30cm_1m_vol7() -> None:
             "../Captures/raw/CTCE7_30cm_1m_vol7.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -160,6 +172,10 @@ def test_extract_sequence_files_CTCE7_65dB10cm60dB30cm60dB2m() -> None:
             "../Captures/raw/CTCE7_65dB10cm60dB30cm60dB2m.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -174,6 +190,10 @@ def test_extract_sequence_files_CTCELC2_10cmVol9_2() -> None:
             "../Captures/raw/CTCELC2_10cmVol9_2.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -188,6 +208,10 @@ def test_extract_sequence_files_CTCELC2_30cm_1m_vol7() -> None:
             "../Captures/raw/CTCELC2_30cm_1m_vol7.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -202,6 +226,10 @@ def test_extract_sequence_files_CTCELC2_GluedVol7() -> None:
             "../Captures/raw/CTCELC2_GluedVol7.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -216,6 +244,10 @@ def test_extract_sequence_files_CTCELCWG2_1_60dB2m() -> None:
             "../Captures/raw/CTCELCWG2_1_60dB2m.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -230,6 +262,10 @@ def test_extract_sequence_files_CTCELCWG2_1_65dB10cm60dB30cm_mic1() -> None:
             "../Captures/raw/CTCELCWG2_1_65dB10cm60dB30cm_mic1.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -244,6 +280,10 @@ def test_extract_sequence_files_CTCELCWG2_1_lineIn_VOL50() -> None:
             "../Captures/raw/CTCELCWG2_1_lineIn_VOL50.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -258,6 +298,10 @@ def test_extract_sequence_files_KantarCertificationMeters() -> None:
             "../KantarCertificationMeters.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
     for i in range(len(output_file_paths)):
@@ -272,6 +316,10 @@ def test_extract_sequence_files_incorrect_file_path() -> None:
             "../incorrect_file.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert output_file_paths == []
 
@@ -284,6 +332,10 @@ def test_extract_sequence_files_empty_begin_timestamps() -> None:
             "../KantarCertificationMeters.wav",
         ),
         begin_timestamps,
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../Captures",
+        ),
     )
     assert output_file_paths == []
 
