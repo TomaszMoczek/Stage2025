@@ -113,7 +113,7 @@ def get_begin_timestamps(file_path) -> list:
     return begin_timestamps
 
 
-def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> list:
+def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> dict:
     """
     Extracts the output audio sequence files from the input *.wav file
 
@@ -123,10 +123,10 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> l
     str: output_folder_path
 
     Return:
-    list: output_file_paths
+    dict: output_file_paths
     """
     sequences = []
-    output_file_paths = []
+    output_file_paths = {}
 
     if not os.path.isfile(file_path):
         print(file_path, "file likely does not exist")
@@ -153,6 +153,37 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> l
                 inner_sequences.append(sequence)
             sequences.append(numpy.array(inner_sequences).T)
 
+    positions = {
+        "linein": -1,
+        "glued": -1,
+        "10cm": -1,
+        "30cm": -1,
+        "1m": -1,
+        "2m": -1,
+        "3m": -1,
+    }
+
+    file_name = str(os.path.basename(file_path)).lower()
+
+    for position in positions.keys():
+        positions[position] = file_name.find(position)
+
+    positions = {k: v for k, v in positions.items() if v != -1}
+    positions = dict(sorted(positions.items(), key=lambda item: item[1]))
+    positions = list(positions)
+
+    flag = len(positions) == len(sequences)
+
+    modes = {
+        "linein": 2,
+        "glued": 2,
+        "10cm": 3,
+        "30cm": 4,
+        "1m": 4,
+        "2m": 4,
+        "3m": 4,
+    }
+
     for index, sequence in enumerate(sequences):
         file_name = (
             os.path.basename(file_path).split(".")[0] + "_" + str(index + 1) + ".wav"
@@ -166,76 +197,8 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> l
             fs,
             sequence,
         )
-        output_file_paths.append(output_file_path)
+        output_file_paths[output_file_path] = modes[positions[index]] if flag else 2
         print("Extracted", output_file_path, "output file")
-
-    certification_modes_to_use = {}
-    certification_modes = {
-        "lineIn": 2,
-        "Glued": 2,
-        "10cm": 3,
-        "30cm": 4,
-        "1m": 4,
-        "2m": 4,
-        "3m": 4,
-    }
-    certification_distances = {
-        "lineIn": -1,
-        "Glued": -1,
-        "10cm": -1,
-        "30cm": -1,
-        "1m": -1,
-        "2m": -1,
-        "3m": -1,
-    }
-
-    for distance in certification_distances.keys():
-        certification_distances[distance] = os.path.basename(file_path).find(distance)
-
-    certification_distances = {
-        k: v for k, v in certification_distances.items() if v > -1
-    }
-
-    certification_distances = dict(
-        sorted(certification_distances.items(), key=lambda item: item[1])
-    )
-
-    if len(certification_distances) != len(output_file_paths):
-        print("Diffrent amaounts of sequences")
-        return output_file_paths
-
-    for index, distance in enumerate(certification_distances.keys()):
-        certification_distances[distance] = output_file_paths[index]
-
-    for distance in certification_distances.keys():
-        certification_modes_to_use[certification_distances[distance]] = (
-            certification_modes[distance]
-        )
-
-    for sequence in certification_modes_to_use.keys():
-        sample_reader = subprocess.run(
-            [
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "../SamplesAudioWM/Sample_Reader.exe",
-                ),
-                "-i",
-                sequence,
-                "-type",
-                "SNAP",
-                "-profile",
-                "P5T",
-                "-certificationMode",
-                str(certification_modes_to_use[sequence]),
-            ],
-            capture_output=True,
-            start_new_session=True,
-        )
-        if sample_reader.returncode != 0:
-            print(
-                f"Sample_Reader.exe exited with {sample_reader.returncode} return code:"
-            )
-            print(f"{sample_reader.stderr.decode()}")
 
     return output_file_paths
 
@@ -256,7 +219,7 @@ def parse_file(file_path, output_folder_path) -> None:
     if len(begin_timestamps) == 0:
         print("Failed to parse", file_path, "input file")
         return
-    extract_sequence_files(
+    output_file_paths = extract_sequence_files(
         file_path=file_path,
         begin_timestamps=begin_timestamps,
         output_folder_path=output_folder_path,
