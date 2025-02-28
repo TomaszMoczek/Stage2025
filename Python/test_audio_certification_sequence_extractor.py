@@ -120,8 +120,9 @@ def test_extract_sequence_files_CTCE7_10cmvol9_1() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["3"]
 
 
 def test_extract_sequence_files_CTCE7_10cmvol9_2() -> None:
@@ -138,8 +139,9 @@ def test_extract_sequence_files_CTCE7_10cmvol9_2() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["3"]
 
 
 def test_extract_sequence_files_CTCE7_30cm_1m_vol7() -> None:
@@ -156,8 +158,9 @@ def test_extract_sequence_files_CTCE7_30cm_1m_vol7() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["4", "4"]
 
 
 def test_extract_sequence_files_CTCE7_65dB10cm60dB30cm60dB2m() -> None:
@@ -178,8 +181,9 @@ def test_extract_sequence_files_CTCE7_65dB10cm60dB30cm60dB2m() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["3", "4", "4"]
 
 
 def test_extract_sequence_files_CTCELC2_10cmVol9_2() -> None:
@@ -196,8 +200,9 @@ def test_extract_sequence_files_CTCELC2_10cmVol9_2() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["3"]
 
 
 def test_extract_sequence_files_CTCELC2_30cm_1m_vol7() -> None:
@@ -214,8 +219,9 @@ def test_extract_sequence_files_CTCELC2_30cm_1m_vol7() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["4", "4"]
 
 
 def test_extract_sequence_files_CTCELC2_GluedVol7() -> None:
@@ -232,8 +238,9 @@ def test_extract_sequence_files_CTCELC2_GluedVol7() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["2"]
 
 
 def test_extract_sequence_files_CTCELCWG2_1_60dB2m() -> None:
@@ -250,8 +257,9 @@ def test_extract_sequence_files_CTCELCWG2_1_60dB2m() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["4"]
 
 
 def test_extract_sequence_files_CTCELCWG2_1_65dB10cm60dB30cm_mic1() -> None:
@@ -268,8 +276,9 @@ def test_extract_sequence_files_CTCELCWG2_1_65dB10cm60dB30cm_mic1() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["3", "4"]
 
 
 def test_extract_sequence_files_CTCELCWG2_1_lineIn_VOL50() -> None:
@@ -286,8 +295,9 @@ def test_extract_sequence_files_CTCELCWG2_1_lineIn_VOL50() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["2"]
 
 
 def test_extract_sequence_files_KantarCertificationMeters() -> None:
@@ -304,8 +314,9 @@ def test_extract_sequence_files_KantarCertificationMeters() -> None:
         ),
     )
     assert len(output_file_paths) == len(begin_timestamps)
-    for i in range(len(output_file_paths)):
-        assert os.path.isfile(output_file_paths[i])
+    for output_file_path in output_file_paths:
+        assert os.path.isfile(output_file_path)
+    assert list(output_file_paths.values()) == ["2"]
 
 
 def test_extract_sequence_files_incorrect_file_path() -> None:
@@ -321,7 +332,7 @@ def test_extract_sequence_files_incorrect_file_path() -> None:
             "../Captures",
         ),
     )
-    assert output_file_paths == []
+    assert len(output_file_paths) == 0
 
 
 def test_extract_sequence_files_empty_begin_timestamps() -> None:
@@ -337,7 +348,7 @@ def test_extract_sequence_files_empty_begin_timestamps() -> None:
             "../Captures",
         ),
     )
-    assert output_file_paths == []
+    assert len(output_file_paths) == 0
 
 
 def test_main() -> None:
