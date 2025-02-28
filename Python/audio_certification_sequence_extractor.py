@@ -152,7 +152,7 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> d
     positions = {k: v for k, v in positions.items() if v != -1}
     positions = dict(sorted(positions.items(), key=lambda item: item[1]))
 
-    distances = list(positions)
+    distances = list(positions.keys())
 
     fs, data = scipy.io.wavfile.read(file_path)
 
@@ -201,6 +201,29 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> d
             sequence,
         )
         mode = modes[distances[index]] if flag else modes["linein"]
+        sample_reader = subprocess.run(
+            [
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "../SamplesAudioWM/Sample_Reader.exe",
+                ),
+                "-i",
+                output_file_path,
+                "-type",
+                "SNAP",
+                "-profile",
+                "P5T",
+                "-certificationMode",
+                mode,
+            ],
+            capture_output=True,
+            start_new_session=True,
+        )
+        if sample_reader.returncode != 0:
+            print(
+                f"Sample_Reader.exe exited with {sample_reader.returncode} return code:"
+            )
+            print(f"{sample_reader.stderr.decode()}")
         output_file_paths[output_file_path] = mode
         print("Extracted", output_file_path, "output file")
 
