@@ -125,12 +125,34 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> d
     Return:
     dict: output_file_paths
     """
-    sequences = []
     output_file_paths = {}
 
     if not os.path.isfile(file_path):
         print(file_path, "file likely does not exist")
         return output_file_paths
+
+    distances = []
+    sequences = []
+
+    positions = {
+        "linein": -1,
+        "glued": -1,
+        "10cm": -1,
+        "30cm": -1,
+        "1m": -1,
+        "2m": -1,
+        "3m": -1,
+    }
+
+    file_name = str(os.path.basename(file_path)).lower()
+
+    for position in positions.keys():
+        positions[position] = file_name.find(position)
+
+    positions = {k: v for k, v in positions.items() if v != -1}
+    positions = dict(sorted(positions.items(), key=lambda item: item[1]))
+
+    distances = list(positions)
 
     fs, data = scipy.io.wavfile.read(file_path)
 
@@ -153,36 +175,17 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> d
                 inner_sequences.append(sequence)
             sequences.append(numpy.array(inner_sequences).T)
 
-    positions = {
-        "linein": -1,
-        "glued": -1,
-        "10cm": -1,
-        "30cm": -1,
-        "1m": -1,
-        "2m": -1,
-        "3m": -1,
-    }
-
-    file_name = str(os.path.basename(file_path)).lower()
-
-    for position in positions.keys():
-        positions[position] = file_name.find(position)
-
-    positions = {k: v for k, v in positions.items() if v != -1}
-    positions = dict(sorted(positions.items(), key=lambda item: item[1]))
-    positions = list(positions)
-
-    flag = len(positions) == len(sequences)
-
     modes = {
-        "linein": 2,
-        "glued": 2,
-        "10cm": 3,
-        "30cm": 4,
-        "1m": 4,
-        "2m": 4,
-        "3m": 4,
+        "linein": "2",
+        "glued": "2",
+        "10cm": "3",
+        "30cm": "4",
+        "1m": "4",
+        "2m": "4",
+        "3m": "4",
     }
+
+    flag = len(distances) == len(sequences)
 
     for index, sequence in enumerate(sequences):
         file_name = (
@@ -197,7 +200,8 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> d
             fs,
             sequence,
         )
-        output_file_paths[output_file_path] = modes[positions[index]] if flag else 2
+        mode = modes[distances[index]] if flag else modes["linein"]
+        output_file_paths[output_file_path] = mode
         print("Extracted", output_file_path, "output file")
 
     return output_file_paths
@@ -219,7 +223,7 @@ def parse_file(file_path, output_folder_path) -> None:
     if len(begin_timestamps) == 0:
         print("Failed to parse", file_path, "input file")
         return
-    output_file_paths = extract_sequence_files(
+    extract_sequence_files(
         file_path=file_path,
         begin_timestamps=begin_timestamps,
         output_folder_path=output_folder_path,
