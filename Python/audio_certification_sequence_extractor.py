@@ -225,7 +225,7 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> d
             )
             print(f"{sample_reader.stderr.decode()}")
         output_file_paths[output_file_path] = mode
-        print("Extracted", output_file_path, "output file")
+        print("Extracted output file: ", output_file_path)
 
     return output_file_paths
 
@@ -241,10 +241,10 @@ def parse_file(file_path, output_folder_path) -> None:
     Return:
     None
     """
-    print("Parsing", file_path, "input file")
+    print("Parsing input file: ", file_path)
     begin_timestamps = get_begin_timestamps(file_path=file_path)
     if len(begin_timestamps) == 0:
-        print("Failed to parse", file_path, "input file")
+        print("Failed to parse input file: ", file_path)
         return
     extract_sequence_files(
         file_path=file_path,
