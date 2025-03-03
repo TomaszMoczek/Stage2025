@@ -5,6 +5,8 @@ import scipy
 import pandas
 import subprocess
 
+from termcolor import colored
+
 
 def usage() -> None:
     """
@@ -65,7 +67,7 @@ def get_begin_timestamps(file_path) -> list:
     if sample_reader.returncode != 0:
         print(f"Sample_Reader.exe exited with {sample_reader.returncode} return code:")
         print(f"{sample_reader.stderr.decode()}")
-        return begin_timestamp
+        return begin_timestamps
 
     df = pandas.read_csv(
         filepath_or_buffer=os.path.join(
@@ -200,32 +202,80 @@ def extract_sequence_files(file_path, begin_timestamps, output_folder_path) -> d
             fs,
             sequence,
         )
-        mode = modes[distances[index]] if flag else modes["linein"]
-        sample_reader = subprocess.run(
-            [
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "../SamplesAudioWM/Sample_Reader.exe",
-                ),
-                "-i",
-                output_file_path,
-                "-type",
-                "SNAP",
-                "-profile",
-                "P5T",
-                "-certificationMode",
-                mode,
-            ],
-            capture_output=True,
-            start_new_session=True,
-        )
-        if sample_reader.returncode != 0:
-            print(
-                f"Sample_Reader.exe exited with {sample_reader.returncode} return code:"
-            )
-            print(f"{sample_reader.stderr.decode()}")
-        output_file_paths[output_file_path] = mode
         print("Extracted output file: ", output_file_path)
+        types = ("SNAP", "KAM_ID_INK")
+        mode = modes[distances[index]] if flag else modes["linein"]
+        if not os.path.isdir(os.path.join(output_folder_path, "SNAP")):
+            os.mkdir(os.path.join(output_folder_path, "SNAP"))
+        if not os.path.isdir(os.path.join(output_folder_path, "KAM_ID_INK")):
+            os.mkdir(os.path.join(output_folder_path, "KAM_ID_INK"))
+        for type in types:
+            sample_reader = subprocess.run(
+                [
+                    os.path.join(
+                        os.path.dirname(os.path.abspath(__file__)),
+                        "../SamplesAudioWM/Sample_Reader.exe",
+                    ),
+                    "-i",
+                    output_file_path,
+                    "-type",
+                    type,
+                    "-profile",
+                    "P5T",
+                    "-certificationMode",
+                    mode,
+                ],
+                capture_output=True,
+                start_new_session=True,
+            )
+            if sample_reader.returncode != 0:
+                print(
+                    f"Sample_Reader.exe exited with {sample_reader.returncode} return code:"
+                )
+                print(f"{sample_reader.stderr.decode()}")
+            else:
+                if type == "SNAP":
+                    for file in os.listdir(output_folder_path):
+                        if file.endswith(".txt"):
+                            if "MainReport" in file:
+                                report = pandas.read_csv(
+                                    os.path.join(output_folder_path, file), header=None
+                                )
+                                print(colored("SNAP Certification Results:", "blue"))
+                                if report.loc[4, 0].split()[2] == "YES":
+                                    print(colored(report.loc[4, 0], "green"))
+                                else:
+                                    print(colored(report.loc[4, 0], "red"))
+                                    for i in range(6, 11):
+                                        if report.loc[i, 0].split()[2] == "KO":
+                                            print(colored(report.loc[i, 0], "red"))
+                            os.rename(
+                                os.path.join(output_folder_path, file),
+                                os.path.join(output_folder_path, "SNAP", file),
+                            )
+                elif type == "KAM_ID_INK":
+                    for file in os.listdir(output_folder_path):
+                        if file.endswith(".txt"):
+                            if "MainReport" in file:
+                                report = pandas.read_csv(
+                                    os.path.join(output_folder_path, file), header=None
+                                )
+                                print(
+                                    colored("KAM_ID_INK Certification Results:", "blue")
+                                )
+                                if report.loc[4, 0].split()[2] == "YES":
+                                    print(colored(report.loc[4, 0], "green"))
+                                else:
+                                    print(colored(report.loc[4, 0], "red"))
+                                    for i in range(6, 11):
+                                        if report.loc[i, 0].split()[2] == "KO":
+                                            print(colored(report.loc[i, 0], "red"))
+                            os.rename(
+                                os.path.join(output_folder_path, file),
+                                os.path.join(output_folder_path, "KAM_ID_INK", file),
+                            )
+        print()
+        output_file_paths[output_file_path] = mode
 
     return output_file_paths
 
@@ -242,6 +292,7 @@ def parse_file(file_path, output_folder_path) -> None:
     None
     """
     print("Parsing input file: ", file_path)
+    print()
     begin_timestamps = get_begin_timestamps(file_path=file_path)
     if len(begin_timestamps) == 0:
         print("Failed to parse input file: ", file_path)
@@ -251,6 +302,7 @@ def parse_file(file_path, output_folder_path) -> None:
         begin_timestamps=begin_timestamps,
         output_folder_path=output_folder_path,
     )
+    print("Done")
 
 
 def main() -> int:
